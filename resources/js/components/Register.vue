@@ -61,6 +61,8 @@
 </template>
 
 <script>
+import Cookies from "js-cookie";
+
 export default {
     name: "Register",
 
@@ -76,22 +78,19 @@ export default {
 
     methods: {
         register() {
-            axios.get('/sanctum/csrf-cookie')
-                .then(response => {
-                    axios.post('/register', {
-                        name: this.name,
-                        email: this.email,
-                        password: this.password,
-                        password_confirmation: this.password_confirmation
-                    })
-                        .then(res => {
-                            console.log(res);
-                            //this.$router.push({name: 'user.personal'});
-                        })
-                        .catch(error =>{
-                            this.error = error.response.data.message;
-                        })
-                });
+            axios.post('/register', {
+                name: this.name,
+                email: this.email,
+                password: this.password,
+                password_confirmation: this.password_confirmation
+            })
+                .then(res => {
+                    localStorage.setItem('x_xsrf_token', Cookies.get("XSRF-TOKEN"));
+                    this.$router.push({name: 'user.personal'});
+                })
+                .catch(error =>{
+                    this.error = error.response.data.message;
+                })
         },
 
     }

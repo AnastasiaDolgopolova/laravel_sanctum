@@ -1,7 +1,7 @@
 import * as VueRouter from "vue-router";
 
 
-const route = VueRouter.createRouter ({
+const router = VueRouter.createRouter ({
 
     history: VueRouter.createWebHistory('/'),
     routes: [
@@ -20,18 +20,39 @@ const route = VueRouter.createRouter ({
             component: () => import('./components/Register.vue'),
             name: 'user.register'
         },
-       /* {
+        {
             path: '/users/personal',
-            component: () => import('./components/User/PersonalComponent.vue'),
+            component: () => import('./components/Personal.vue'),
             name: 'user.personal'
-        },*/
-       /* {
+        },
+        {
             path: '/:pathMatch(.*)*',
-            component: () => import('./components/User/404Component.vue'),
+            component: () => import('./components/404.vue'),
             name: '404'
-        }*/
+        }
 
     ],
 })
 
-export default route;
+router.beforeEach((to, from, next) => {
+    const token = localStorage.getItem('x_xsrf_token');
+
+    if(!token) {
+        if (to.name === 'user.login' || to.name === 'user.register') {
+            return next();
+        } else {
+            return next({
+                name: 'user.login'
+            })
+        }
+    }
+
+    if (to.name === 'user.login' || to.name === 'user.register' && token) {
+        return next({
+            name: 'user.personal'
+        })
+    }
+    next()
+})
+
+export default router;

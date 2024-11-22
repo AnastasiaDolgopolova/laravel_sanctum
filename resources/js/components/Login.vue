@@ -45,6 +45,9 @@
 </template>
 
 <script>
+import api from "@/api";
+import Cookies from 'js-cookie';
+
 export default {
     name: "Login",
 
@@ -58,19 +61,17 @@ export default {
 
     methods: {
         login() {
-            axios.get('/sanctum/csrf-cookie')
-                .then(response => {
-                    axios.post('/login', {
-                        email: this.email,
-                        password: this.password,
-                    })
-                        .then(res => {
-                            console.log(res);
-                        })
-                        .catch(error =>{
-                            this.error = error.response.data.message;
-                        })
-                });
+            api.post('/login', {
+                email: this.email,
+                password: this.password,
+            })
+                .then(res => {
+                    localStorage.setItem('x_xsrf_token', Cookies.get("XSRF-TOKEN"));
+                    this.$router.push({name: 'user.personal'});
+                })
+                .catch(error =>{
+                    this.error = error.response.data.message;
+                })
         },
     }
 
