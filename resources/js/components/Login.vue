@@ -58,21 +58,19 @@ export default {
 
     methods: {
         login() {
-            axios.get('/sanctum/csrf-cookie').then(response => {
-                axios.post('/login', {
-                    email: this.email,
-                    password: this.password,
-                })
-                    .then(res => {
-                        console.log(res);
-                        // localStorage.setItem('access_token', res.data.access_token);
-
-                        // this.$router.push({name: 'user.personal'});
+            axios.get('/sanctum/csrf-cookie')
+                .then(response => {
+                    axios.post('/login', {
+                        email: this.email,
+                        password: this.password,
                     })
-                    .catch(error =>{
-                        this.error = error.response.data.message;
-                    })
-            });
+                        .then(res => {
+                            console.log(res);
+                        })
+                        .catch(error =>{
+                            this.error = error.response.data.message;
+                        })
+                });
         },
     }
 
